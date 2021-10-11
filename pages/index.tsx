@@ -1,47 +1,50 @@
-import React from 'react'
-import { LionPlayer } from '../module/player'
+import React, { useState } from 'react'
+import useScript from '../module/hooks/useScript'
+import IVSPlayer from '../module/IVSPlayer'
+import { usePlayer } from '../module/player'
 
 
 
-export const Player = ({
- 
-}: {
+export const Player = (): JSX.Element => {
 
-}) => {
-  
+  const [url, setUrl] = useState("https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8")
+  const [playerUrl, setPlayerUrl] = useState("https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8")
+
+  const { loading, error } = useScript({
+    src: 'https://player.live-video.net/1.5.0/amazon-ivs-videojs-tech.min.js',
+  })
+  // Load IVS quality plugin
+  const { loading: loadingPlugin, error: pluginError } = useScript({
+    src: 'https://player.live-video.net/1.5.0/amazon-ivs-quality-plugin.min.js',
+  })
+
+  if (loading || loadingPlugin) {
+    return 'loading ivs videojs tech and plugins...'
+  }
+
+  if (error || pluginError) {
+    return 'Error!'
+  }
+
   return (
-    <React.Fragment>
-      <div style={{
-        height:'600px'
-      }}>
+    <React.Fragment>   
+      <div style={{display:'flex', }}>
 
-      <LionPlayer
-        playbackUrl={"https://streamcdnin.getloconow.com/8IS83M64UL_d8600856-8673-491a-a5af-edb6affecd49/manifest.m3u8"}
-        sources={[
-          {
-            src: 'https://streamcdnin.getloconow.com/8IS83M64UL_d8600856-8673-491a-a5af-edb6affecd49/manifest.m3u8',
-            type: 'application/x-mpegURL',
-          },
-        ]}
-        onPause={()=>{}}
-        onPlay={()=>{}}
-        autoplay={true}       
-        controlBar={{
-                playbackRateMenuButton: false,
-                currentTimeDisplay: false,
-                captionsButton: false,
-                liveDisplay: false,
-                seekToLive: false,
-                remainingTimeDisplay: false,
-                durationDisplay: false,
-                timeDivider: false,
-                pictureInPictureToggle: false,
-                playToggle: false,
-              }
-           
+      <input placeholder="put video url to test it" style={{
+        width: '800px',
+        margin: '4px 0px'
+      }} value={url} onChange={(e)=> {
+        setUrl(e.target.value)
+      }}/>
+      <button onClick={()=> {
+        if(url) {
+          setPlayerUrl(url)
         }
+      }}> Submit</button>
+      </div>  
+      <IVSPlayer
+        src={playerUrl}
       />
-      </div>
     </React.Fragment>
   )
 }
